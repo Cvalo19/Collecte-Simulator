@@ -1,0 +1,27 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  placeholder: string;
+  options: string[];
+  required?: boolean;
+  className?: string;
+  icon?: string;
+}
+const { id, name, placeholder, options, required = false, className = "", icon } = Astro.props;
+---
+<div class={`searchable-select ${className}`} id={`${id}Picker`} data-searchable-select data-field={id} data-placeholder={placeholder}>
+  {icon && <span class="field-icon" aria-hidden="true">{icon}</span>}
+  <input type="hidden" id={`${id}Value`} name={name} />
+  <button type="button" class="searchable-trigger" id={`${id}Trigger`} aria-expanded="false">
+    <span class="searchable-selected" id={`${id}Selected`}>{placeholder}</span>
+    <span class="searchable-arrow" aria-hidden="true"></span>
+  </button>
+  <div class="searchable-menu" id={`${id}Menu`} hidden>
+    <input type="text" class="searchable-filter" placeholder="Filtrar" autocomplete="off" aria-label={`Filtrar ${placeholder}`} />
+    <div class="searchable-options">
+      {options.map((option) => <button type="button" class="searchable-option" data-value={option}>{option}</button>)}
+    </div>
+    <p class="searchable-empty" hidden>No hay resultados</p>
+  </div>
+</div>

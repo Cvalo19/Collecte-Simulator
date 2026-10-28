@@ -1,0 +1,717 @@
+---
+import "../styles/global.css";
+import SearchableSelect from "../components/SearchableSelect.astro";
+import InfoTooltip from "../components/InfoTooltip";
+
+const addressRows = [
+  { fields: [
+    { name: "SEG#1 *", type: "select", options: ["Seleccionar", "Calle", "Carrera", "Avenida", "Diagonal", "Transversal"] },
+    { name: "Numero *", type: "text" }, { name: "Letra", type: "text" }, { name: "BIS", type: "check" }
+  ]},
+  { fields: [
+    { name: "Zona", type: "select", options: ["Seleccionar", "Norte", "Sur", "Este", "Oeste"] },
+    { name: "Numero", type: "text" }, { name: "Letra", type: "text" }, { name: "BIS", type: "check" }
+  ]},
+  { fields: [
+    { name: "Zona", type: "select", options: ["Seleccionar", "Interior", "Apartamento", "Local"] },
+    { name: "Puerta", type: "text" }, { name: "Torre", type: "text" }, { name: "Bloque", type: "text" }
+  ]},
+  { fields: [{ name: "Tipo", type: "select", options: ["Seleccionar", "Casa", "Apartamento", "Local", "Oficina", "Otro"] }] }
+];
+const personOptions = ["Persona Natural", "Persona Jurídica"];
+const idTypeOptions = ["CC", "CE", "NIT", "CV"];
+const domainOptions = ["@gmail.com", "@hotmail.com", "@gmail.es", "@hotmail.es", "@"];
+const departmentOptions = ["Amazonas", "Antioquia", "Arauca", "Atlántico", "Bogotá D.C.", "Bolívar", "Boyacá", "Caldas", "Caquetá", "Casanare", "Cauca", "Cesar", "Chocó", "Córdoba", "Cundinamarca", "Guainía", "Guaviare", "Huila", "La Guajira", "Magdalena", "Meta", "Nariño", "Norte de Santander", "Putumayo", "Quindío", "Risaralda", "San Andrés y Providencia", "Santander", "Sucre", "Tolima", "Valle del Cauca", "Vaupés", "Vichada"];
+const regionalOptions = ["Bogotá", "Costa", "Andina", "Sur", "Oriente"];
+const networkOptions = ["HFC", "REDCO", "GPON", "MOVIL"];
+const campaignOptions = ["Base Propia", "Full tigo", "Migracion", "Portabilidad", "Pos a pos", "Series", "winback", "referidos", "remarketing", "Whatsapp", "Upselling full equipo", "Coltel - Movistar"];
+const cityOptions: string[] = [];
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simulador de formulario para formación de personal." />
+    <title>Collecte · Simulador de formación</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-area">
+        <button class="hamburger" aria-label="Alternar menú" id="menuToggle">☰</button>
+        <div class="collecte-brand"><span class="brand-mark">◖</span> Collect<span class="brand-yellow">e</span></div>
+        <div class="brand-divider"></div>
+        <div class="emtelco-brand">emtelco</div>
+      </div>
+      <div class="top-actions">
+        <div class="user-name"><strong>Christian Való</strong><small>(simulador)</small></div>
+        <button class="top-action"><span>⌂</span>Inicio</button>
+        <button class="top-action"><span>♧</span>Gestiones</button>
+        <button class="top-action"><span>▤</span>Manual</button>
+        <button class="top-action"><span>⇥</span>Salir</button>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <button class="nav-group"><span class="nav-icon">🌐</span><span>Ejecución de campañas</span><span class="chevron">⌄</span></button>
+        <button class="nav-group active"><span class="nav-icon">🗂️</span><span>Ventas</span><span class="chevron">⌃</span></button>
+        <nav class="subnav">
+          <a class="selected" href="#form"><span>▦</span><span>Registro ventas<small>Registro ventas</small></span></a>
+          <a href="#form"><span>▣</span><span>Registro Express<small>Registro Express</small></span></a>
+          <a href="#form"><span>▰</span><span>Acumulado<small>Acumulado</small></span></a>
+        </nav>
+        <button class="nav-single"><span>▥</span><span>Centro reportes<small>reportes</small></span></button>
+        <button class="nav-group"><span class="nav-icon">🪙</span><span>Comisiones</span><span class="chevron">⌄</span></button>
+        <button class="nav-group"><span class="nav-icon">⭐</span><span>Soy Leyenda</span><span class="chevron">⌄</span></button>
+        <div class="sidebar-pattern"></div>
+      </aside>
+
+      <main class="main-content">
+        <section class="page-card" id="form">
+          <div class="page-heading">
+            <div class="heading-title"><span class="heading-icon">☷</span><h1>Ingreso de <b>ventas</b></h1></div>
+            <button class="btn btn-primary reset-btn" id="resetBtn">⟳ <span>Reiniciar</span></button>
+          </div>
+
+          <div class="stepper" aria-label="Etapas del formulario">
+            <div class="step active"><span class="step-circle">✎</span><span>Datos Cliente<small>Cliente</small></span></div>
+            <div class="step-line"></div>
+            <div class="step muted"><span class="step-circle">✚</span><span>Matriz<small>Ofertas</small></span></div>
+            <div class="step-line"></div>
+            <div class="step muted"><span class="step-circle">⚙</span><span>Datos Adicionales<small>Contrato</small></span></div>
+          </div>
+          <div class="progress-track"><span></span></div>
+
+          <form id="customerForm">
+            <div class="form-grid">
+ 
+
+<!-- Selección de proveedor -->
+<div class="provider-section span-4">
+  
+  <fieldset class="provider-fieldset">
+    <legend>Proveedor - Selecciona un proveedor</legend>
+    
+
+    <div class="provider-buttons">
+      <button
+        type="button"
+        class="provider-button active"
+        data-provider="Tigo"
+        aria-pressed="true"
+      >
+        Tigo
+      </button>
+
+      <button
+        type="button"
+        class="provider-button"
+        data-provider="Coltel B2C"
+        aria-pressed="false"
+      >
+        Coltel B2C
+      </button>
+      <div class="">
+    <InfoTooltip client:load>
+      <p class="font-semibold text-white">
+        Es imporante seleccionar el proveedor correcto antes de continuar con el registro del cliente. Esto garantiza que la información se procese adecuadamente y se asignen los recursos correspondientes.
+      </p>
+
+    </InfoTooltip>
+    </div>
+  </fieldset>
+
+  <div class="provider-message tigo-message" id="providerMessage" role="status">
+    <span class="provider-message-icon">i</span>
+    <span>Has seleccionado el proveedor <strong id="providerName">Tigo</strong></span>
+  </div>
+
+  <input type="hidden" id="providerValue" name="provider" value="Tigo" />
+</div>
+
+ 
+              <SearchableSelect id="person" name="person" placeholder="Tipo de Persona *" options={personOptions} required className="span-4" icon="☷" />
+              <SearchableSelect id="idType" name="idType" placeholder="Tipo *" options={idTypeOptions} required icon="▣" />
+
+              
+
+<div class="span-1">
+  
+
+
+<div class="field has-icon identification-field">
+  <input
+    id="identification"
+    name="identification"
+    type="text"
+    inputmode="numeric"
+    pattern="[0-9]+"
+    maxlength="15"
+    placeholder="Cédula cliente *"
+    required
+    aria-label="Cédula cliente"
+  />
+
+  <span class="field-icon">⌕</span>
+
+  <div class="identification-tooltip">
+    <InfoTooltip client:load>
+      <p class="font-semibold text-white">
+        La cedula del cliente debe colocarse sin puntos ni comas, solo números. No se aceptan letras ni caracteres especiales.
+      </p>
+
+    </InfoTooltip>
+  </div>
+</div>
+
+</div>
+
+
+              <label class="field"><input type="text" placeholder="Lugar de expedición" aria-label="Lugar de expedición" /></label>
+              
+              <label class="field"><input type="date" name="issueDate" aria-label="Fecha de expedición" required /></label>
+
+              <label class="field has-icon"><span class="field-icon">●</span><input required placeholder="Primer nombre*" /></label>
+              <label class="field"><input placeholder="Segundo nombre" /></label>
+              <label class="field"><input required placeholder="Primer Apellido *" /></label>
+              <label class="field"><input placeholder="Segundo Apellido" /></label>
+
+              <label class="field has-icon"><span class="field-icon">▣</span><input required inputmode="numeric" pattern="[0-9]+" maxlength="10" placeholder="Celular *" /></label>
+              <label class="field"><input required inputmode="numeric" pattern="[0-9]+" maxlength="10" placeholder="Contacto Auxiliar *" /></label>
+              <label class="field has-icon email-field"><span class="field-icon">✉</span><input type="text" placeholder="Correo sin dominio" aria-label="Correo sin dominio" /><small class="helper"><strong>Recuerde: </strong> solicitar el correo al cliente; es fundamental para garantizar la entrega y la activación del servicio</small></label>
+              <SearchableSelect id="domain" name="domain" placeholder="Dominio" options={domainOptions} className="floating-label" />
+
+
+              <fieldset class="address-type span-4" id="addressTypeField">
+                <legend>Tipo de Dirección:</legend>
+                
+
+                <label>
+                  <input type="radio" name="addressType" value="urbana" checked />
+                  Urbana
+                </label>
+
+                <label>
+                  <input type="radio" name="addressType" value="rural" />
+                  Rural
+                </label>
+                <InfoTooltip client:load>
+      <p class="font-semibold text-white">
+        Seleccionar Rural en Migraciòn para mayor agilidad. Si es portabilidad seleccionar Urbana para asegurar una dirección correcta y evitar problemas en la entrega del servicio.
+
+    </InfoTooltip>
+              </fieldset>
+              
+
+              <!-- Solo se muestra para dirección rural -->
+              <label class="field span-2" id="gisAddressField" hidden>
+                <input
+                  type="text"
+                  name="gisAddress"
+                  id="gisAddress"
+                  placeholder="Dirección generada GIS"
+                  aria-label="Dirección generada GIS"
+                />
+              </label>
+
+              <!-- Campos que solo se muestran para dirección urbana -->
+              <div class="address-urban-fields span-4" id="urbanAddressFields">
+                {addressRows.map((row) => row.fields.map((f) => (
+                  <label class:list={[
+                    "field",
+                    f.type === "check" ? "check-field" : ""
+                  ]}>
+                    {f.type === "select" ? (
+                      <select aria-label={f.name}>
+                        {f.options.map((o, i) => (
+                          <option value={i ? o : ""} selected={i === 0}>
+                            {i ? o : f.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : f.type === "check" ? (
+                      <>
+                        <input type="checkbox" />
+                        <span>{f.name}</span>
+                      </>
+                    ) : (
+                      <input placeholder={f.name} aria-label={f.name} />
+                    )}
+                  </label>
+                )))}
+              </div>
+
+
+              <SearchableSelect id="department" name="department" placeholder="Departamento*" options={departmentOptions} required icon="●" />
+              <SearchableSelect id="city" name="city" placeholder="Ciudad*" options={cityOptions} required />
+              <label class="field"><input required placeholder="Barrio *" /></label>
+              <SearchableSelect id="regional" name="regional" placeholder="Regional*" options={regionalOptions} required />
+
+              <label class="field"><input type="number" name="strata" min="1" max="6" step="1" inputmode="numeric" placeholder="Estrato *" aria-label="Estrato" required /></label>
+              <SearchableSelect id="network" name="network" placeholder="Tipo red *" options={networkOptions} required icon="◉" />
+              <label class="field"><input required placeholder="Anicall*" /></label>
+              <label class="field"><input required placeholder="ID llamada *" />
+                
+                  <div class="identification-tooltip">
+    <InfoTooltip client:load>
+      <p class="font-semibold text-white">
+        Se encuentra en genesys, tiene un formato similar a: abdcef-123456-ghijkl-7890-mnopq
+      </p>
+
+    </InfoTooltip>
+  </div>
+  </label>
+
+              <label class="field has-icon"><span class="field-icon">▤</span><input placeholder="# Orden" />
+        <div class="identification-tooltip">
+    <InfoTooltip client:load>
+      <p class="font-semibold text-white">
+        Es el numero de chip, se encuentra en CRM
+      </p>
+
+    </InfoTooltip>
+  </div>
+
+    </label>
+              <button type="button" class="btn btn-primary validate-btn" id="validateBtn">Validar Cliente</button>
+              <div class="status">Estado: <strong id="statusText">Terminado</strong></div>
+              <label class="field has-icon"><span class="field-icon">#</span><input required placeholder="Ticket *" /></label>
+
+              <label class="field"><input required placeholder="Resultado *" /></label>
+              <label class="field has-icon"><span class="field-icon">▣</span><select required aria-label="Factura Web"><option value="">Factura Web*</option><option value="Sí">Sí</option><option value="No">No</option></select></label>
+              <SearchableSelect id="campaign" name="campaign" placeholder="Tipo Campaña*" options={campaignOptions} required icon="▣" />
+              <label class="field floating-label"><span>Siebel código canal</span><input value="229200" readonly /></label>
+
+              <label class="field has-icon"><span class="field-icon">●</span><div class="readonly-wrap"><small>Siebel código asesor</small><input value="UsuarioPrueba" readonly /></div></label>
+              <div class="next-row"><button class="btn btn-primary" id="nextBtn" type="button">Siguiente <span>›</span></button></div>
+            </div>
+          </form>
+        </section>
+        <section class="metrics">
+          <div class="metrics-icon">☎</div><div><h2>Indicadores de Gestión</h2><strong>Hoy:</strong><p>Panel de práctica · los datos no se envían a ningún sistema.</p></div>
+        </section>
+        <p class="demo-note">SIMULADOR DE FORMACIÓN · Datos ficticios · No conectado a sistemas empresariales</p>
+      </main>
+    </div>
+
+    
+<!-- Modal de resultado de validación -->
+<div
+  class="validation-overlay"
+  id="validationModal"
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="validationTitle"
+>
+  <section class="validation-modal">
+    <header class="validation-header" id="validationHeader">
+      <h2 id="validationTitle">Resultado Validación</h2>
+      <button
+        type="button"
+        class="validation-close"
+        id="closeValidation"
+        aria-label="Cerrar ventana"
+      >×</button>
+    </header>
+
+    <div class="validation-content">
+      <h3>Validación Móvil/Home:</h3>
+
+      <p class="validation-result" id="validationResult"></p>
+
+      <p class="validation-next">
+        <strong>Paso a Seguir:</strong>
+        <span id="validationNext"></span>
+      </p>
+
+      <p class="validation-client-label">Indícale a tu cliente:</p>
+      <p class="validation-client-message" id="validationMessage"></p>
+
+      <div
+        class="traffic-light"
+        id="trafficLight"
+        role="img"
+        aria-label="Semáforo de validación"
+      >
+        <div class="traffic-light-glass">
+          <div class="traffic-light-bulb" id="trafficLightBulb"></div>
+        </div>
+      </div>
+
+      <p class="validation-demo-note">
+        Resultado simulado con fines educativos. No corresponde a una validación real.
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-primary validation-accept"
+        id="acceptValidation"
+      >Entendido</button>
+    </div>
+  </section>
+</div>
+
+    
+<script>
+  const $ = <T extends Element>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector);
+  const $$ = <T extends Element>(selector: string, root: ParentNode = document) => Array.from(root.querySelectorAll<T>(selector));
+  const idInput = $<HTMLInputElement>("#identification");
+  const validateBtn = $<HTMLButtonElement>("#validateBtn");
+  const statusText = $("#statusText");
+  const resetBtn = $<HTMLButtonElement>("#resetBtn");
+  const customerForm = $<HTMLFormElement>("#customerForm");
+  const nextBtn = $<HTMLButtonElement>("#nextBtn");
+  const menuToggle = $<HTMLButtonElement>("#menuToggle");
+  const sidebar = $("#sidebar");
+
+  
+const addressTypeField = $("#addressTypeField");
+const gisAddressField = $("#gisAddressField");
+const urbanAddressFields = $("#urbanAddressFields");
+
+function updateAddressType() {
+  const selectedType = $<HTMLInputElement>(
+    'input[name="addressType"]:checked'
+  )?.value;
+
+  const isRural = selectedType === "rural";
+
+  // Cambiar el ancho del selector
+if (addressTypeField) {
+  addressTypeField.style.gridColumn = isRural ? "span 2" : "span 4";
+}
+
+  // Mostrar u ocultar los campos correspondientes
+  if (gisAddressField) {
+    gisAddressField.hidden = !isRural;
+  }
+
+  if (urbanAddressFields) {
+    urbanAddressFields.hidden = isRural;
+  }
+}
+
+// Escuchar los cambios entre Urbana y Rural
+$$<HTMLInputElement>(
+  'input[name="addressType"]'
+).forEach((radio) => {
+  radio.addEventListener("change", updateAddressType);
+});
+
+// Establecer la vista inicial
+updateAddressType();
+
+
+  const searchableSelects = $$<HTMLElement>("[data-searchable-select]");
+  const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  function filterSelect(root: HTMLElement) {
+    const filter = $<HTMLInputElement>(".searchable-filter", root);
+    const empty = $(".searchable-empty", root);
+    if (!filter || !empty) return;
+    const query = normalize(filter.value);
+    let matches = 0;
+    $$<HTMLButtonElement>(".searchable-option", root).forEach((option) => {
+      option.hidden = !normalize(option.textContent ?? "").includes(query);
+      if (!option.hidden) matches++;
+    });
+    empty.hidden = matches > 0;
+  }
+
+  function closeSelect(root: HTMLElement) {
+    const menu = $(".searchable-menu", root);
+    const trigger = $<HTMLButtonElement>(".searchable-trigger", root);
+    if (menu) (menu as HTMLElement).hidden = true;
+    trigger?.setAttribute("aria-expanded", "false");
+  }
+
+  function openSelect(root: HTMLElement) {
+    const menu = $<HTMLDivElement>(".searchable-menu", root);
+    const trigger = $<HTMLButtonElement>(".searchable-trigger", root);
+    const filter = $<HTMLInputElement>(".searchable-filter", root);
+    if (!menu || !trigger || !filter) return;
+    menu.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    filter.value = "";
+    filterSelect(root);
+    filter.focus();
+  }
+
+  searchableSelects.forEach((root) => {
+    const trigger = $<HTMLButtonElement>(".searchable-trigger", root);
+    const filter = $<HTMLInputElement>(".searchable-filter", root);
+    const hiddenInput = $<HTMLInputElement>('input[type="hidden"]', root);
+    const selected = $(".searchable-selected", root);
+    trigger?.addEventListener("click", () => {
+      const menu = $<HTMLDivElement>(".searchable-menu", root);
+      if (menu?.hidden) openSelect(root); else closeSelect(root);
+    });
+    filter?.addEventListener("input", () => filterSelect(root));
+    $<HTMLDivElement>(".searchable-options", root)?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement) || !target.matches(".searchable-option")) return;
+      const value = target.dataset.value;
+      if (!value || !hiddenInput || !selected) return;
+      hiddenInput.value = value;
+      selected.textContent = value;
+      closeSelect(root);
+      if (root.dataset.field === "department") updateCities(value);
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) return;
+    searchableSelects.forEach((root) => { if (!root.contains(event.target as Node)) closeSelect(root); });
+  });
+
+  const citiesByDepartment: Record<string, string[]> = {
+    "Amazonas": ["Leticia"], "Antioquia": ["Medellín"], "Arauca": ["Arauca"], "Atlántico": ["Barranquilla"],
+    "Bogotá D.C.": ["Bogotá D.C."], "Bolívar": ["Cartagena"], "Boyacá": ["Tunja"], "Caldas": ["Manizales"],
+    "Caquetá": ["Florencia"], "Casanare": ["Yopal"], "Cauca": ["Popayán"], "Cesar": ["Valledupar"],
+    "Chocó": ["Quibdó"], "Córdoba": ["Montería"], "Cundinamarca": ["Bogotá D.C."], "Guainía": ["Inírida"],
+    "Guaviare": ["San José del Guaviare"], "Huila": ["Neiva"], "La Guajira": ["Riohacha"], "Magdalena": ["Santa Marta"],
+    "Meta": ["Villavicencio"], "Nariño": ["Pasto"], "Norte de Santander": ["Cúcuta"], "Putumayo": ["Mocoa"],
+    "Quindío": ["Armenia"], "Risaralda": ["Pereira"], "San Andrés y Providencia": ["San Andrés"], "Santander": ["Bucaramanga"],
+    "Sucre": ["Sincelejo"], "Tolima": ["Ibagué"], "Valle del Cauca": ["Cali"], "Vaupés": ["Mitú"], "Vichada": ["Puerto Carreño"]
+  };
+
+  function updateCities(department: string) {
+    const root = $('[data-field="city"]');
+    if (!root) return;
+    const hiddenInput = $<HTMLInputElement>('input[type="hidden"]', root);
+    const selected = $(".searchable-selected", root);
+    const optionsContainer = $(".searchable-options", root);
+    if (hiddenInput) hiddenInput.value = "";
+    if (selected) selected.textContent = "Ciudad*";
+    if (!optionsContainer) return;
+    optionsContainer.replaceChildren();
+    (citiesByDepartment[department] ?? []).forEach((city) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "searchable-option";
+      button.dataset.value = city;
+      button.textContent = city;
+      button.addEventListener("click", () => {
+        if (hiddenInput) hiddenInput.value = city;
+        if (selected) selected.textContent = city;
+        closeSelect(root);
+      });
+      optionsContainer.append(button);
+    });
+  }
+
+  idInput?.addEventListener("input", () => { idInput.value = idInput.value.replace(/\D/g, ""); });
+  validateBtn?.addEventListener("click", () => {
+    if (statusText) { statusText.textContent = "Pendiente de simulación"; statusText.classList.add("pending"); }
+    if (validateBtn) validateBtn.textContent = "Validación pendiente";
+  });
+
+  
+const validationModal = $("#validationModal");
+const validationHeader = $("#validationHeader");
+const validationResult = $("#validationResult");
+const validationNext = $("#validationNext");
+const validationMessage = $("#validationMessage");
+const trafficLight = $("#trafficLight");
+const trafficLightBulb = $("#trafficLightBulb");
+const closeValidation = $("#closeValidation");
+const acceptValidation = $("#acceptValidation");
+
+const validationScenarios = {
+  verde: {
+    color: "#65bd00",
+    result: "Resultado Validación Verde",
+    next: "Continúa con el flujo normal de la venta.",
+    message: "Procedemos a ingresar la solicitud en nuestro sistema.",
+    bulb: "radial-gradient(circle at 35% 28%, #b6f5a0, #49d52b 55%, #1a9b20)"
+  },
+  amarillo: {
+    color: "#c59a00",
+    result: "Resultado Validación Amarillo",
+    next: "Puedes continuar con el proceso. Registra el resultado en las observaciones.",
+    message: "Continuaremos con el proceso y dejaremos registrada la observación correspondiente.",
+    bulb: "radial-gradient(circle at 35% 28%, #fff5a8, #ffd629 55%, #c58b00)"
+  },
+  naranja: {
+    color: "#e98225",
+    result: "Resultado Validación Naranja",
+    next: "Escenario educativo: verifica el procedimiento antes de continuar.",
+    message: "Te informaremos el resultado de la revisión antes de continuar con la solicitud.",
+    bulb: "radial-gradient(circle at 35% 28%, #ffd1a1, #ff8a24 55%, #bd4b00)"
+  },
+  rojo: {
+    color: "#dc4141",
+    result: "Resultado Validación Rojo",
+    next: "No continúes con el flujo de venta en esta simulación.",
+    message: "Por el momento no podemos continuar con la solicitud.",
+    bulb: "radial-gradient(circle at 35% 28%, #ffaaaa, #f33d3d 55%, #a90000)"
+  }
+};
+
+function getInputValue(selector) {
+  return $<HTMLInputElement>(selector)?.value.trim() ?? "";
+}
+
+function openValidationModal() {
+  const identification = idInput?.value.trim() ?? "";
+
+  if (!identification || !/^\d+$/.test(identification)) {
+    alert("Ingresa una cédula válida compuesta únicamente por números.");
+    idInput?.focus();
+    return;
+  }
+
+  // Ignorar ceros a la izquierda.
+  const significantDigits = identification.replace(/^0+/, "");
+
+  if (!significantDigits) {
+    alert("La cédula no puede estar compuesta únicamente por ceros.");
+    idInput?.focus();
+    return;
+  }
+
+  const firstDigit = significantDigits[0];
+
+  let scenarioKey;
+
+  if (["1", "2", "3"].includes(firstDigit)) {
+    scenarioKey = "verde";
+  } else if (["4", "5", "6"].includes(firstDigit)) {
+    scenarioKey = "amarillo";
+  } else if (["7", "8"].includes(firstDigit)) {
+    scenarioKey = "naranja";
+  } else {
+    scenarioKey = "rojo";
+  }
+
+  const scenario = validationScenarios[scenarioKey];
+
+  // Obtener el nombre del cliente desde el formulario.
+  const firstName = getInputValue(
+    'input[placeholder="Primer nombre*"]'
+  );
+  const secondName = getInputValue(
+    'input[placeholder="Segundo nombre"]'
+  );
+  const firstSurname = getInputValue(
+    'input[placeholder="Primer Apellido *"]'
+  );
+  const secondSurname = getInputValue(
+    'input[placeholder="Segundo Apellido"]'
+  );
+
+  const fullName = [
+    firstName,
+    secondName,
+    firstSurname,
+    secondSurname
+  ].filter(Boolean).join(" ");
+
+  validationResult.textContent = scenario.result;
+  validationResult.style.color = scenario.color;
+
+  validationNext.textContent = scenario.next;
+
+  validationMessage.textContent = fullName
+    ? `Señor/a ${fullName.toUpperCase()}. ${scenario.message}`
+    : scenario.message;
+
+  if (trafficLightBulb) {
+    trafficLightBulb.style.background = scenario.bulb;
+  }
+
+  trafficLight?.setAttribute(
+    "aria-label",
+    `Semáforo de validación ${scenarioKey}`
+  );
+
+  // Diferenciar visualmente cada encabezado.
+  if (validationHeader) {
+    validationHeader.style.background =
+      scenarioKey === "verde" ? "#4053b5" : scenario.color;
+  }
+
+  if (validationModal) {
+    validationModal.hidden = false;
+  }
+
+  // Actualizar el estado de la simulación.
+  if (statusText) {
+    statusText.textContent =
+      scenarioKey === "verde" ? "Validado (simulación)" :
+      scenarioKey === "amarillo" ? "Validado con observación (simulación)" :
+      scenarioKey === "naranja" ? "Revisión pendiente (simulación)" :
+      "No continuar (simulación)";
+
+    statusText.classList.toggle(
+      "pending",
+      scenarioKey === "amarillo" || scenarioKey === "naranja"
+    );
+  }
+}
+
+function closeValidationModal() {
+  if (validationModal) {
+    validationModal.hidden = true;
+  }
+}
+
+validateBtn?.addEventListener("click", openValidationModal);
+closeValidation?.addEventListener("click", closeValidationModal);
+acceptValidation?.addEventListener("click", closeValidationModal);
+
+validationModal?.addEventListener("click", (event) => {
+  if (event.target === validationModal) {
+    closeValidationModal();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && validationModal && !validationModal.hidden) {
+    closeValidationModal();
+  }
+});
+
+
+  const providerButtons = $$<HTMLButtonElement>(".provider-button");
+  function selectProvider(provider: string) {
+    providerButtons.forEach((button) => {
+      const active = button.dataset.provider === provider;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+    const providerName = $("#providerName");
+    const providerValue = $<HTMLInputElement>("#providerValue");
+    const message = $("#providerMessage");
+    if (providerName) providerName.textContent = provider;
+    if (providerValue) providerValue.value = provider;
+    message?.classList.toggle("tigo-message", provider === "Tigo");
+    message?.classList.toggle("coltel-message", provider === "Coltel B2C");
+  }
+  providerButtons.forEach((button) => button.addEventListener("click", () => { if (button.dataset.provider) selectProvider(button.dataset.provider); }));
+
+  resetBtn?.addEventListener("click", () => {
+    customerForm?.reset();
+    if (statusText) { statusText.textContent = "Terminado"; statusText.classList.remove("pending"); }
+    if (validateBtn) validateBtn.textContent = "Validar Cliente";
+    searchableSelects.forEach((root) => {
+      const input = $<HTMLInputElement>('input[type="hidden"]', root);
+      const selected = $(".searchable-selected", root);
+      if (input) input.value = "";
+      if (selected) selected.textContent = root.dataset.placeholder ?? "Seleccionar";
+      closeSelect(root);
+    });
+    const placeholders: Record<string, string> = { person: "Tipo de Persona *", idType: "Tipo *", domain: "Dominio", department: "Departamento*", city: "Ciudad*", regional: "Regional*", network: "Tipo red *", campaign: "Tipo Campaña*" };
+    searchableSelects.forEach((root) => { const selected = $(".searchable-selected", root); const key = root.dataset.field ?? ""; if (selected && placeholders[key]) selected.textContent = placeholders[key]; });
+    selectProvider("Tigo");
+    updateCities("");
+    updateAddressType();
+  });
+  nextBtn?.addEventListener("click", () => alert("Esta etapa se implementará después en el simulador de formación."));
+  menuToggle?.addEventListener("click", () => sidebar?.classList.toggle("sidebar-hidden"));
+</script>
+
+  </body>
+</html>
